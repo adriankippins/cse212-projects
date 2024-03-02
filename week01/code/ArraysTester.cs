@@ -39,7 +39,19 @@ public static class ArraysTester {
         // step by step before you write the code. The plan should be clear enough that it could
         // be implemented by another person.
 
-        return new double[0]; // replace this return statement with your own
+
+        // Multiples will be stored here
+        double[] factors = new double[length];
+
+        // Calculate and store each multiple
+        for (int x = 0; x < length; x++)
+        {
+            factors[x] = number * (x + 1);
+        }
+
+        // Return the multiple array
+
+        return factors;
     }
     
     /// <summary>
@@ -57,5 +69,15 @@ public static class ArraysTester {
         // step by step before you write the code. The plan should be clear enough that it could
         // be implemented by another person.
 
+        // Ensure that the rotation amount is within the valid range
+        amount = amount % data.Count; 
+    
+         if (amount == 0) return; // If the rotation amount is zero, no rotation is needed
+    
+         // Perform rotation
+        List<int> rotated = data.GetRange(data.Count - amount, amount); // Extract elements to rotate
+        data.RemoveRange(data.Count - amount, amount); // Remove the extracted elements from the end of the list
+        data.InsertRange(0, rotated); // Insert the extracted elements at the beginning of the list
     }
+    
 }
