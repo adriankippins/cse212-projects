@@ -15,7 +15,10 @@
         // Console.WriteLine(players);    // This can be un-commented out for debug help
         while (players.Length > 0)
             players.GetNextPerson();
-        // Defect(s) Found: 
+        // Defect(s) Found:
+        // Actual Output: Sue, Tim, Bob
+        // Errors Found: Incorrect handling of turns in the queue.
+        // Fix: Ensure that each person's turns are properly decremented and they are re-added to the queue if they have remaining turns. 
 
         Console.WriteLine("---------");
 
@@ -39,6 +42,9 @@
             players.GetNextPerson();
 
         // Defect(s) Found: 
+        // Actual Output: Sue, Tim, George, Tim, Bob
+        // Errors Found: Incorrect handling of turns in the queue.
+        // Fix: The same fix as in Test 1 will ensure proper handling of turns.
 
         Console.WriteLine("---------");
 
@@ -56,7 +62,10 @@
             players.GetNextPerson();
             // Console.WriteLine(players);
         }
-        // Defect(s) Found: 
+        // Defect(s) Found:
+        // Actual Output: Sue, Tim
+        // Errors Found: Handling of a person with infinite turns is incorrect.
+        // Fix: Ensure that persons with infinite turns (0 or less) are correctly re-added to the queue.
 
         Console.WriteLine("---------");
 
@@ -74,6 +83,9 @@
             // Console.WriteLine(players);
         }
         // Defect(s) Found: 
+        // Actual Output: Sue, Tim
+        // Errors Found: Handling of a person with infinite turns is incorrect.
+        // Fix: the same fix as in Test 3 to correctly handle infinite turns.
 
         Console.WriteLine("---------");
 
@@ -84,5 +96,7 @@
         players = new TakingTurnsQueue();
         players.GetNextPerson();
         // Defect(s) Found:
+        //The expected error message is not displayed when the queue is empty.
+        // Fix: Ensure that an error message is displayed when attempting to dequeue from an empty queue.
     }
 }
