@@ -26,15 +26,18 @@ public static class SetsAndMapsTester {
         // 94 & 49
         // 31 & 13
 
+
         // Problem 2: Degree Summary
         // Sample Test Cases (may not be comprehensive) 
         Console.WriteLine("\n=========== Census TESTS ===========");
-        Console.WriteLine(string.Join(", ", SummarizeDegrees("census.txt")));
+        //For some strange reason I had to put the absolute path to the file here or else it throws an exception.
+        Console.WriteLine(string.Join(", ", SummarizeDegrees(@"C:\Users\Roberto.Kippins\Dropbox\cse212-projects\week03\code\census.txt")));
         // Results may be in a different order:
         // <Dictionary>{[Bachelors, 5355], [HS-grad, 10501], [11th, 1175],
         // [Masters, 1723], [9th, 514], [Some-college, 7291], [Assoc-acdm, 1067],
         // [Assoc-voc, 1382], [7th-8th, 646], [Doctorate, 413], [Prof-school, 576],
         // [5th-6th, 333], [10th, 933], [1st-4th, 168], [Preschool, 51], [12th, 433]}
+
 
         // Problem 3: Anagrams
         // Sample Test Cases (may not be comprehensive) 
@@ -49,6 +52,7 @@ public static class SetsAndMapsTester {
         Console.WriteLine(IsAnagram("tom marvolo riddle", "i am lord voldemort")); // true
         Console.WriteLine(IsAnagram("Eleven plus Two", "Twelve Plus One")); // true
         Console.WriteLine(IsAnagram("Eleven plus One", "Twelve Plus One")); // false
+
 
         // Problem 4: Maze
         Console.WriteLine("\n=========== Maze TESTS ===========");
@@ -111,6 +115,26 @@ public static class SetsAndMapsTester {
         // To display the pair correctly use something like:
         // Console.WriteLine($"{word} & {pair}");
         // Each pair of words should displayed on its own line.
+
+        // Create a hash set to store the words already seen
+        var seen = new HashSet<string>();
+        // Iterate through each word in the array
+        foreach (var word in words) {
+            // Reverse the word
+            var reverseWord = Reverse(word);
+            // If the reversed word is in the set, then it's a symmetric pair
+            if (seen.Contains(reverseWord)) {
+                Console.WriteLine($"{word} & {reverseWord}");
+            } else {
+                // Otherwise, add the word to the set
+                seen.Add(word);
+            }
+        }
+    }
+    static string Reverse(string word) {
+        char[] charArray = word.ToCharArray();
+        Array.Reverse(charArray);
+        return new string(charArray);
     }
 
     /// <summary>
@@ -129,13 +153,25 @@ public static class SetsAndMapsTester {
     /// #############
     private static Dictionary<string, int> SummarizeDegrees(string filename) {
         var degrees = new Dictionary<string, int>();
+
         foreach (var line in File.ReadLines(filename)) {
             var fields = line.Split(",");
             // Todo Problem 2 - ADD YOUR CODE HERE
+
+            var degree = fields[3].Trim();
+
+            if (degrees.ContainsKey(degree)) {
+                // Increment the count if the degree already exists
+                degrees[degree]++;
+            } else {
+                // Add the degree to the dictionary with a count of 1
+                degrees[degree] = 1;
+            }
         }
 
         return degrees;
     }
+
 
     /// <summary>
     /// Determine if 'word1' and 'word2' are anagrams.  An anagram
@@ -158,7 +194,43 @@ public static class SetsAndMapsTester {
     /// #############
     private static bool IsAnagram(string word1, string word2) {
         // Todo Problem 3 - ADD YOUR CODE HERE
-        return false;
+        // Remove spaces and convert both words to lowercase
+        word1 = word1.Replace(" ", "").ToLower();
+        word2 = word2.Replace(" ", "").ToLower();
+        // If the lengths of the words are different, they cannot be anagrams
+        if (word1.Length != word2.Length) {
+            return false;
+        }
+        // Create dictionaries to store character counts for each word
+        var charCount1 = new Dictionary<char, int>();
+        var charCount2 = new Dictionary<char, int>();
+        // Populate charCount1 with character counts from word1
+        foreach (char c in word1) {
+
+            if (charCount1.ContainsKey(c)) {
+                charCount1[c]++;
+            } else {
+                charCount1[c] = 1;
+            }
+        }
+        // Populate charCount2 with character counts from word2
+        foreach (char c in word2) {
+            if (charCount2.ContainsKey(c)) {
+                charCount2[c]++;
+            } else {
+                charCount2[c] = 1;
+            }
+        }
+        // Compare the character counts of both words
+        foreach (var kvp in charCount1) {
+            // If any character count in charCount1 is different from the corresponding count in charCount2,
+            // the words are not anagrams
+            if (!charCount2.ContainsKey(kvp.Key) || charCount2[kvp.Key] != kvp.Value) {
+                return false;
+            }
+        }
+        // If all character counts are the same, the words are anagrams
+        return true;
     }
 
     /// <summary>
@@ -206,6 +278,86 @@ public static class SetsAndMapsTester {
         return map;
     }
 
+
+    public class Maze
+    {
+        // Dictionary representing the maze map, where the key is the (x, y) coordinate
+        // and the value is an array indicating valid movements (left, right, up, down)
+        private Dictionary<ValueTuple<int, int>, bool[]> mazeMap;
+        // Current position of the player in the maze
+        private int currentX;
+        private int currentY;
+        // Constructor to initialize the maze with the provided map
+        public Maze(Dictionary<ValueTuple<int, int>, bool[]> map)
+        {
+            mazeMap = map;
+            currentX = 1; // Initial X coordinate
+            currentY = 1; // Initial Y coordinate
+        }
+        // Move the player left in the maze
+        public void MoveLeft()
+        {
+            // Check if moving left is valid and within the maze boundaries
+            if (currentX > 1 && mazeMap[(currentX, currentY)][0]) {
+                // Update the current X coordinate
+                currentX--;
+                // Display the updated position
+                ShowStatus();
+            } else {
+                // Display an error message if the move is not valid
+                Console.WriteLine("Error: Cannot move left.");
+            }
+        }
+        // Move the player right in the maze
+        public void MoveRight()
+        {
+            // Check if moving right is valid and within the maze boundaries
+            if (currentX < 6 && mazeMap[(currentX, currentY)][1]) {
+                // Update the current X coordinate
+                currentX++;
+                // Display the updated position
+                ShowStatus();
+            } else {
+                // Display an error message if the move is not valid
+                Console.WriteLine("Error: Cannot move right.");
+            }
+        }
+        // Move the player up in the maze
+        public void MoveUp()
+        {
+            // Check if moving up is valid and within the maze boundaries
+            if (currentY > 1 && mazeMap[(currentX, currentY)][2]) {
+                // Update the current Y coordinate
+                currentY--;
+                // Display the updated position
+                ShowStatus();
+            } else {
+                // Display an error message if the move is not valid
+                Console.WriteLine("Error: Cannot move up.");
+            }
+        }
+        // Move the player down in the maze
+        public void MoveDown()
+        {
+            // Check if moving down is valid and within the maze boundaries
+            if (currentY < 6 && mazeMap[(currentX, currentY)][3]) {
+                // Update the current Y coordinate
+                currentY++;
+                // Display the updated position
+                ShowStatus();
+            } else {
+                // Display an error message if the move is not valid
+                Console.WriteLine("Error: Cannot move down.");
+            }
+        }
+        // Display the current position of the player in the maze
+        public void ShowStatus()
+        {
+            Console.WriteLine($"Current position: ({currentX}, {currentY})");
+        }
+    }
+
+
     /// <summary>
     /// This function will read JSON (Javascript Object Notation) data from the 
     /// United States Geological Service (USGS) consisting of earthquake data.
@@ -228,12 +380,32 @@ public static class SetsAndMapsTester {
         using var reader = new StreamReader(jsonStream);
         var json = reader.ReadToEnd();
         var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
-
         var featureCollection = JsonSerializer.Deserialize<FeatureCollection>(json, options);
 
         // TODO:
         // 1. Add code in FeatureCollection.cs to describe the JSON using classes and properties 
         // on those classes so that the call to Deserialize above works properly.
         // 2. Add code below to print out each place a earthquake has happened today and its magitude.
+
+        // Print out each earthquake location and magnitude
+        foreach (var feature in featureCollection.Features)
+        {
+            Console.WriteLine($"{feature.Properties.Place} - Mag {feature.Properties.Mag}");
+        }
     }
+
+    // Define classes to represent the JSON structure
+    public class FeatureCollection {
+        public List<Feature> Features { get; set; }
+    }
+
+    public class Feature {
+        public Properties Properties { get; set; }
+    }
+
+    public class Properties {
+        public string Place { get; set; }
+        public double Mag { get; set; }
+    }
+
 }
